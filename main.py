@@ -1,5 +1,6 @@
 import asn1tools as asn
 import json
+import addition
 
 ### AfS software assignment 1 - example code ###
 
@@ -41,8 +42,7 @@ for exercise in my_exercises['exercises']:
     params = exercise[1]                                           # get parameters
     
     if operation == 'add':
-        ### Do addition ###
-        params['answer'] = '7'
+        params['answer'] = addition.do_addition()
     
     if operation == 'subtract':
         ### Do subtraction ###
