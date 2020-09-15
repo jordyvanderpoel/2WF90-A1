@@ -1,6 +1,6 @@
 import asn1tools as asn
 import json
-import addition
+from operations import addition
 
 ### AfS software assignment 1 - example code ###
 
