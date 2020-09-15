@@ -1,13 +1,13 @@
 import asn1tools as asn
 import json
-from operations import addition
+import operations
 
 ### AfS software assignment 1 - example code ###
 
 # set file names
 base_location = './'
 ops_loc = base_location + 'operations.asn'
-exs_loc = base_location + 'my_exercises'
+exs_loc = base_location + 'my_pretty_exercises'
 ans_loc = base_location + 'my_answers'
 
 ###### Creating an exercise list file ######
@@ -42,11 +42,10 @@ for exercise in my_exercises['exercises']:
     params = exercise[1]                                           # get parameters
     
     if operation == 'add':
-        params['answer'] = addition.do_addition(params['x'], params['y'], params['radix'])
+        params['answer'] = operations.do_addition(params['x'], params['y'], params['radix'])
     
     if operation == 'subtract':
-        ### Do subtraction ###
-        params['answer'] = '-0'
+        params['answer'] = operations.do_subtraction(params['x'], params['y'], params['radix'])
 
     if operation == 'multiply':
         ### Do multiplication ###
