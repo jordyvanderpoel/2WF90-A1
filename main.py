@@ -13,14 +13,14 @@ ans_loc = base_location + 'my_answers'
 ###### Creating an exercise list file ######
 
 # How to create an exercise JSON file containing one addition exercise
-exercises = {'exercises' : []}                                     # initialize empty exercise list
-ex = {'add' : {'radix' : 10, 'x' : '3', 'y' : '4', 'answer' : ''}} # create add exercise
-exercises['exercises'].append(ex)                                  # add exercise to list
+#exercises = {'exercises' : []}                                     # initialize empty exercise list
+#ex = {'add' : {'radix' : 10, 'x' : '3', 'y' : '4', 'answer' : ''}} # create add exercise
+#exercises['exercises'].append(ex)                                  # add exercise to list
 
 # Encode exercise list and print to file
-my_file = open(exs_loc, 'wb+')                                     # write to binary file
-my_file.write(json.dumps(exercises).encode())                      # add encoded exercise list
-my_file.close()
+#my_file = open(exs_loc, 'wb+')                                     # write to binary file
+#my_file.write(json.dumps(exercises).encode())                      # add encoded exercise list
+#my_file.close()
 
 ###### Using an exercise list file ######
 
