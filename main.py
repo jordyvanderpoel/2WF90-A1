@@ -44,26 +44,46 @@ for exercise in my_exercises['exercises']:
     if operation == 'add':
         params['answer'] = operations.do_addition(params['x'], params['y'], params['radix'])
     
+    if operation == 'mod-add':
+        ### TODO: Do modular addition ###
+        params['answer'] = '1234'
+    
     if operation == 'subtract':
         params['answer'] = operations.do_subtraction(params['x'], params['y'], params['radix'])
 
+    if operation == 'mod-subtract':
+        ### TODO: Do modular subtraction ###
+        params['answer'] = '1234'
+    
     if operation == 'multiply':
-        ### Do multiplication ###
+        ### TODO: Do multiplication ###
         params['answer'] = '66'
         params['count-mul'] = '1'
         params['count-add'] = '2'
     
-    if operation == 'mod-add':
-        ### Do modular addition ###
+    if operation == 'mod-multiply':
+        ### TODO: Do modular multiplication ###
         params['answer'] = '1234'
     
+    if operation == 'karatsuba':
+        ### TODO: Do karatsuba algorithm ###
+        params['answer'] = ''
+        params['count-mul'] = 0
+        params['count-add'] = 0
+    
+    if operation == 'reduce':
+        ### TODO: Do modular reduction ###
+        params['answer'] = ''
+    
     if operation == 'euclid':
-        ### Do euclidean algorithm ###
+        ### TODO: Do euclidean algorithm ###
         params['answ-d'] = '1'
         params['answ-a'] = '0'
         params['answ-b'] = '0'
     
-    # etc.
+    if operation == 'inverse':
+        ### TODO: Do modular inversion ###
+        params['answer'] = ''
 
     # Save answer
     my_answers['exercises'].append({operation: params})
