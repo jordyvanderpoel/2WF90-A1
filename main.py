@@ -42,7 +42,7 @@ for exercise in my_exercises['exercises']:
     params = exercise[1]                                           # get parameters
     
     if operation == 'add':
-        params['answer'] = addition.do_addition()
+        params['answer'] = addition.do_addition(params['x'], params['y'], params['radix'])
     
     if operation == 'subtract':
         ### Do subtraction ###
