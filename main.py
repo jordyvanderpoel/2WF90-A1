@@ -7,7 +7,7 @@ import operations
 # set file names
 base_location = './'
 ops_loc = base_location + 'operations.asn'
-exs_loc = base_location + 'my_pretty_exercises'
+exs_loc = base_location + 'test_exercises_students_pretty_answers'
 ans_loc = base_location + 'my_answers'
 
 ###### Creating an exercise list file ######
@@ -56,10 +56,10 @@ for exercise in my_exercises['exercises']:
         params['answer'] = '1234'
     
     if operation == 'multiply':
-        ### TODO: Do multiplication ###
-        params['answer'] = '66'
-        params['count-mul'] = '1'
-        params['count-add'] = '2'
+        result = operations.do_multiplication(params['x'], params['y'], params['radix'])
+        params['answer'] = result['answer']
+        params['count-mul'] = result['count-mul']
+        params['count-add'] = result['count-add']
     
     if operation == 'mod-multiply':
         ### TODO: Do modular multiplication ###
