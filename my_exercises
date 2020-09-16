@@ -1,1 +1,1 @@
-{"exercises": [{"add": {"radix": 2, "x": "101", "y": "111", "answer": ""}},{"add": {"radix": 10, "x": "13", "y": "29", "answer": ""}},{"add": {"radix": 16, "x": "F", "y": "12", "answer": ""}},{"subtract": {"radix": 2, "x": "1101", "y": "111", "answer": ""}},{"subtract": {"radix": 10, "x": "31", "y": "29", "answer": ""}},{"subtract": {"radix": 16, "x": "23", "y": "F", "answer": ""}}]}
+{"exercises": [{"karatsuba": {"radix": 10, "x": "3000", "y": "40", "answer": ""}}]}

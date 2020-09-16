@@ -66,10 +66,10 @@ for exercise in my_exercises['exercises']:
         params['answer'] = '1234'
     
     if operation == 'karatsuba':
-        ### TODO: Do karatsuba algorithm ###
-        params['answer'] = ''
-        params['count-mul'] = 0
-        params['count-add'] = 0
+        result = operations.do_karatsuba(params['x'], params['y'], params['radix'])
+        params['answer'] = result['answer']
+        params['count-mul'] = result['count-mul']
+        params['count-add'] = result['count-add']
     
     if operation == 'reduce':
         ### TODO: Do modular reduction ###

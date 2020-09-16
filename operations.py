@@ -33,7 +33,7 @@ def do_addition(x,y,r):
     if (c > 0):
         result = rep[c] + result # Add final carry to result
 
-    return result.lstrip('0')
+    return result.lstrip('0').zfill(1)
     
 def do_subtraction(x,y,r):
     # First handle negative numbers
@@ -67,7 +67,7 @@ def do_subtraction(x,y,r):
             
         result = rep[(sum%r)] + result # Add the sum without carries to the current result-string
 
-    return result.lstrip('0')
+    return result.lstrip('0').zfill(1)
     
 def do_multiplication(x,y,r):    
     # First handle negative numbers
@@ -102,7 +102,60 @@ def do_multiplication(x,y,r):
                 s.append(rep[mul//r] + rep[mul%r] + ("0" * n))
     
     for k in s:
-        result['answer'] = do_addition('0' + result['answer'], k, r)
+        result['answer'] = do_addition('0' + result['answer'], k, r).lstrip('0').zfill(1)
         result['count-add'] += 1
+    
+    return result
+    
+def do_karatsuba(x,y,r):
+    # Base case for recursion
+    if len(x) == 1 and len(y) == 1:
+        return do_multiplication(x,y,r)
+
+    # First handle negative numbers
+    if(x[0] == '-' and y[0] == '-'):
+        # x * y = -x * -y
+        return do_karatsuba(flip_neg(x), flip_neg(y), r)
+    if(x[0] == '-'):
+        # x * y = -(-x * y)
+        return flip_neg(do_karatsuba(flip_neg(x), y, r))
+    if(y[0] == '-'):
+        # x * y = -(x * -y)
+        return flip_neg(do_karatsuba(x, flip_neg(y), r))
+
+    # Ensure equal length
+    maxlength = max(len(x),len(y))
+    if maxlength%2 == 1:
+        maxlength += 1
+    y = y.zfill(maxlength)
+    x = x.zfill(maxlength)
+    
+    s = []
+    result = {}
+    result['answer'] = '0'
+    result['count-mul'] = 0
+    result['count-add'] = 0
+    
+    # KARATSUBA MAGIC #
+    halflength = maxlength/2
+    xlo = x[0:(maxlength//2)]
+    xhi = x[(maxlength//2):maxlength]
+    ylo = y[0:(maxlength//2)]
+    yhi = y[(maxlength//2):maxlength]
+    
+    # xhiylo + xloyhi = (xhi+xlo)(yhi+ylo)-xhiyhi-xloylo
+    xhiyhi = do_karatsuba(xhi,yhi,r)
+    xloylo = do_karatsuba(xlo,ylo,r)
+    xhixloyhiylo = do_karatsuba(do_addition(xhi,xlo,r), do_addition(yhi, ylo,r),r) #(xhi+xlo)(yhi+ylo)
+    xhiyloPxloyhi = do_subtraction(do_subtraction(xhixloyhiylo['answer'], xhiyhi['answer'],r), xloylo['answer'],r);
+    
+    result['count-mul'] += xhiyhi['count-mul'] + xloylo['count-mul'] + xhixloyhiylo['count-mul']
+    result['count-add'] += xhiyhi['count-add'] + xloylo['count-add'] + xhixloyhiylo['count-add'] + 4
+    
+    outLo = xhiyhi['answer']
+    outMe = xhiyloPxloyhi + ("0" * (maxlength//2))
+    outHi = xloylo['answer'] + ("0" * (maxlength))
+    
+    result['answer'] = do_addition(do_addition(outLo, outMe, r), outHi, r)
     
     return result
