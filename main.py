@@ -72,18 +72,18 @@ for exercise in my_exercises['exercises']:
         params['count-add'] = result['count-add']
     
     if operation == 'reduce':
-        ### TODO: Do modular reduction ###
-        params['answer'] = ''
+        result = operations.do_reduce(params['x'], params['m'], params['radix'])
+        params['answer'] = result['answer']
     
     if operation == 'euclid':
-        ### TODO: Do euclidean algorithm ###
-        params['answ-d'] = '1'
-        params['answ-a'] = '0'
-        params['answ-b'] = '0'
+        result = operations.do_euclid(params['x'], params['y'], params['radix'])
+        params['answ-d'] = result['answ-d']
+        params['answ-a'] = result['answ-a']
+        params['answ-b'] = result['answ-b']
     
     if operation == 'inverse':
-        ### TODO: Do modular inversion ###
-        params['answer'] = ''
+        result = operations.do_inverse(params['x'], params['m'], params['radix'])
+        params['answer'] = result['answer']
 
     # Save answer
     my_answers['exercises'].append({operation: params})
