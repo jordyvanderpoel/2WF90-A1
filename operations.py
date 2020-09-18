@@ -47,10 +47,18 @@ def do_subtraction(x,y,r):
         # x - y = x + -y
         return do_addition(x, flip_neg(y), r)
         
-    # Handle y > x
-    if(len(y) > len(x) or (len(x) == len(y) and int(y[0], r) > int(x[0], r))):
+    # Handle y is longer x
+    if len(y) > len(x):
         # x - y = -(y - x)
         return flip_neg(do_subtraction(y, x, r))
+
+    # Handle y > x
+    if len(x) == len(y):
+        for i in range(len(x)):
+            if int(y[i], r) > int(x[i], r):
+                return flip_neg(do_subtraction(y, x, r))
+            elif int(y[i], r) < int(x[i], r):
+                break
 
     # Ensure equal length
     maxlength = max(len(x),len(y))
@@ -106,7 +114,7 @@ def do_multiplication(x,y,r):
         result['count-add'] += 1
     
     return result
-    
+
 def do_karatsuba(x,y,r):
     # Base case for recursion
     if len(x) == 1 and len(y) == 1:
@@ -159,3 +167,104 @@ def do_karatsuba(x,y,r):
     result['answer'] = do_addition(do_addition(outLo, outMe, r), outHi, r)
     
     return result
+
+# Simple mod reduce method
+def do_reduce(x,m,r):
+    m3 = m
+    m2 = m
+    while larger_than(x, m2, r):
+        m3 = m2
+        m2 = m2+'0'
+
+    diff = do_subtraction(x, m3, r)
+
+    # If m > diff, diff is the remainder
+    if larger_than(m, diff, r):
+        return {
+            'answer': diff
+        }
+    # Else, recurse
+    else:
+        return do_reduce(diff, m, r)
+
+# Return `True` if `x > y`
+def larger_than(x,y,r):
+
+    # If only one is negative, the
+    # positive value is larger
+    if(x[0] == '-' and y[0] != '-'):
+        return False
+    elif(x[0] != '-' and y[0] == '-'):
+        return True
+
+    # if `-x > -y`, than `x < y`
+    if(x[0] == '-' and y[0] == '-'):
+        z = y
+        y = x[1:]
+        x = z[1:]
+
+    # If there is a difference in length after removing the sign,
+    # on of the two is larger
+    if len(x) > len(y):
+        return True
+    elif len(x) < len(y):
+        return False
+    
+    # Iterate over the values to find a larger or smaller value
+    for i in range(len(x)):
+        diff = do_subtraction(x[i], y[i], r)
+        if diff[0] == '-':
+            return False
+        if diff != '0':
+            return True
+
+    # Both values are equal
+    return False
+
+
+# Strictly for positive integers and very slow
+# TODO: do long division
+def do_division(x,y,r):
+    return
+
+# Extended Euclidian division,
+# still figuring out the extended part
+def do_euclid(x,y,r):
+
+    if y == '0':
+        return {
+            'answ-d': x,
+            'answ-a': '0',
+            'answ-b': '1'
+        }
+
+    # Get the remainder of x%y 
+    remainder = do_reduce(x,y,r)['answer']
+
+    # Recursive loop until `y` == `0`
+    result = do_euclid(y, remainder, r)
+
+    # a0 = do_division(result['answ-b'], result['answ-a'], r)
+
+    # a0 = result['answ-a']
+
+    # a1 = do_multiplication(a0, result['answ-a'], r)['answer']
+
+    # a = do_subtraction(result['answ-b'], a1, r)
+
+    # b = result['answ-a']
+
+    return {
+        'answ-d': result['answ-d'],
+        'answ-a': '',
+        'answ-b': ''
+    }
+
+# TODO
+def do_inverse(x,m,r):
+
+    return {
+        'answer': ''
+    }
+    
+
