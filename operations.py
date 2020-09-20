@@ -379,11 +379,32 @@ def do_euclid(x,y,r):
         'answ-b': y
     }
 
-# TODO
+# Implementation of Algorithm 2.11
 def do_inverse(x,m,r):
 
-    return {
-        'answer': ''
-    }
+    xx = x
+    mm = m
+
+    x1 = '1'
+    x2 = '0'
+
+    while mm != '0':
+
+        res = do_division(xx,mm,r)
+        xx = mm
+        mm = res['r']
+
+        x3 = do_subtraction(x1, do_karatsuba(res['q'], x2, r)['answer'], r)
+        x1 = x2
+        x2 = x3
+    
+    if(xx == '1'):
+        return {
+            'answer': x1
+        }
+    else:
+        return {
+            'answer': 'ERROR - inverse does not exist'
+        }
     
 
