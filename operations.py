@@ -331,7 +331,7 @@ def do_mod_multiply(x,y,m,r):
 # Implementation of Algorithm 2.2
 def do_euclid(x,y,r):
 
-    # Initialize variables
+    # Set xx (a') and yy (b')
     xx = x
     yy = y
     x1 = '1'
@@ -342,15 +342,16 @@ def do_euclid(x,y,r):
     # Loop while yy (b' in the Algorithm 2.2) > 0
     while yy != '0':
 
-        # step 2.2
+        # get q and r from the long division of xx and yy
         res = do_division(xx,yy,r)
 
-        # step 2.3
         xx = yy
         yy = res['r']
 
-        # step 2.4
+        # x3 = x1 - qx2
         x3 = do_subtraction(x1, do_karatsuba(res['q'], x2, r)['answer'], r)
+
+        # y3 = y1 - qy2
         y3 = do_subtraction(y1, do_karatsuba(res['q'], y2, r)['answer'], r)
 
         # step 2.5 and 2.6
@@ -359,15 +360,16 @@ def do_euclid(x,y,r):
         x2 = x3
         y2 = y3
     
-    # GCD
+    # xx equals the GCD
     d = xx
 
-    # Flip signs
+    # If the initial x was negative, make sure to flip x1
     if x[0] != '-' and x != '0':
         x = x1
     else:
         x = flip_neg(x1)
 
+    # Same for y
     if y[0] != '-' and y != '0':
         y = y1
     else:
@@ -381,7 +383,8 @@ def do_euclid(x,y,r):
 
 # Implementation of Algorithm 2.11
 def do_inverse(x,m,r):
-
+    
+    # Set xx (x') and mm (m')
     xx = x
     mm = m
 
@@ -390,14 +393,18 @@ def do_inverse(x,m,r):
 
     while mm != '0':
 
+        # get q and r from the long division of xx and mm
         res = do_division(xx,mm,r)
+
         xx = mm
         mm = res['r']
 
+        # x3 = x1 - qx2
         x3 = do_subtraction(x1, do_karatsuba(res['q'], x2, r)['answer'], r)
         x1 = x2
         x2 = x3
     
+    # If xx is 1, x1 is the inverse. If xx != 1, the inverse does not exist
     if(xx == '1'):
         return {
             'answer': x1
