@@ -40,22 +40,18 @@ my_answers = {'exercises': []}
 for exercise in my_exercises['exercises']:
     operation = exercise[0]                                        # get operation type
     params = exercise[1]                                           # get parameters
-
-    # originalAnswer = params['answer']
     
     if operation == 'add':
         params['answer'] = operations.do_addition(params['x'], params['y'], params['radix'])
     
     if operation == 'mod-add':
-        ### TODO: Do modular addition ###
-        params['answer'] = '1234'
+        params['answer'] = operations.do_mod_addition(params['x'], params['y'], params['m'], params['radix'])
     
     if operation == 'subtract':
         params['answer'] = operations.do_subtraction(params['x'], params['y'], params['radix'])
 
     if operation == 'mod-subtract':
-        ### TODO: Do modular subtraction ###
-        params['answer'] = '1234'
+        params['answer'] = operations.do_mod_subtraction(params['x'], params['y'], params['m'], params['radix'])
     
     if operation == 'multiply':
         result = operations.do_multiplication(params['x'], params['y'], params['radix'])
@@ -86,10 +82,6 @@ for exercise in my_exercises['exercises']:
     if operation == 'inverse':
         result = operations.do_inverse(params['x'], params['m'], params['radix'])
         params['answer'] = result['answer']
-
-    # TODO: remove
-    # if(originalAnswer != params['answer']):
-    #     print('answers for {} dont match: {}, answer: {}'.format(operation, params, originalAnswer))
 
     # Save answer
     my_answers['exercises'].append({operation: params})

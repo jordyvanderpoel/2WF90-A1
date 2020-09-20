@@ -226,6 +226,15 @@
             }
         },
         {
+            "mod-add": {
+                "radix": 10,
+                "x": "100",
+                "y": "213",
+                "m": "10",
+                "answer": "3"
+            }
+        },
+        {
             "mod-subtract": {
                 "radix": 16,
                 "x": "93f76ca85dfdbf3f1790",
@@ -241,6 +250,15 @@
                 "y": "93f76ca85dfdbf3f1790",
                 "m": "157f77a46f4c796bb774",
                 "answer": "3b0d264a4feb9d30b52"
+            }
+        },
+        {
+            "mod-subtract": {
+                "radix": 10,
+                "x": "312",
+                "y": "100",
+                "m": "10",
+                "answer": "2"
             }
         },
         {

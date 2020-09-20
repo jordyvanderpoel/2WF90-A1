@@ -3,6 +3,40 @@ rep = ['0', '1', '2', '3', '4', '5', '6', '7', '8','9', 'a', 'b', 'c', 'd', 'e',
 def flip_neg(x):
     return (x[1:] if x[0] == '-' else '-' + x)
 
+# Return `True` if `x > y`
+def larger_than(x,y,r):
+
+    # If only one is negative, the
+    # positive value is larger
+    if(x[0] == '-' and y[0] != '-'):
+        return False
+    elif(x[0] != '-' and y[0] == '-'):
+        return True
+
+    # if `-x > -y`, than `x < y`
+    if(x[0] == '-' and y[0] == '-'):
+        z = y
+        y = x[1:]
+        x = z[1:]
+
+    # If there is a difference in length after removing the sign,
+    # on of the two is larger
+    if len(x) > len(y):
+        return True
+    elif len(x) < len(y):
+        return False
+    
+    # Iterate over the values to find a larger or smaller value
+    for i in range(len(x)):
+        diff = do_subtraction(x[i], y[i], r)
+        if diff[0] == '-':
+            return False
+        if diff != '0':
+            return True
+
+    # Both values are equal
+    return False
+
 def do_addition(x,y,r):
     # First handle negative numbers
     if(x[0] == '-' and y[0] == '-'):
@@ -34,6 +68,16 @@ def do_addition(x,y,r):
         result = rep[c] + result # Add final carry to result
 
     return result.lstrip('0').zfill(1)
+    
+def do_mod_addition(x,y,m,r):
+    z = do_addition(x,y,r)
+
+    while larger_than(z,m,r) or z == m: # While z >= m
+        z = do_subtraction(z,m,r)
+    while larger_than('0',z,r): # While z < 0
+        z = do_addition(z,m,r)
+        
+    return z
     
 def do_subtraction(x,y,r):
     # First handle negative numbers
@@ -76,6 +120,16 @@ def do_subtraction(x,y,r):
         result = rep[(sum%r)] + result # Add the sum without carries to the current result-string
 
     return result.lstrip('0').zfill(1)
+
+def do_mod_subtraction(x,y,m,r):
+    z = do_subtraction(x,y,r)
+    
+    while larger_than(z,m,r) or z == m: # While z >= m
+        z = do_subtraction(z,m,r)
+    while larger_than('0',z,r): # While z < 0
+        z = do_addition(z,m,r)
+        
+    return z
     
 def do_multiplication(x,y,r):    
     # First handle negative numbers
@@ -129,12 +183,18 @@ def do_karatsuba(x,y,r):
     if(x[0] == '-' and y[0] == '-'):
         # x * y = -x * -y
         return do_karatsuba(flip_neg(x), flip_neg(y), r)
+
     if(x[0] == '-'):
         # x * y = -(-x * y)
-        return flip_neg(do_karatsuba(flip_neg(x), y, r))
+        result = do_multiplication(flip_neg(x), y, r)
+        result['answer'] = flip_neg(result['answer'])
+        return result
+
     if(y[0] == '-'):
         # x * y = -(x * -y)
-        return flip_neg(do_karatsuba(x, flip_neg(y), r))
+        result = do_multiplication(x, flip_neg(y), r)
+        result['answer'] = flip_neg(result['answer'])
+        return result
 
     # Ensure equal length
     maxlength = max(len(x),len(y))
@@ -189,7 +249,7 @@ def do_pow(x, y, r):
         return '1'
 
     while y != '1':
-        result = do_multiplication(result, x, r)['answer']
+        result = do_karatsuba(result, x, r)['answer']
         y = do_subtraction(y, '1', r)
     return result
 
@@ -231,16 +291,16 @@ def do_division(x,y,b):
         p = do_pow(do_radix_to_str(b), i, b)
 
         # (b^i)*y
-        d = do_multiplication(p, y, b)['answer']
+        d = do_karatsuba(p, y, b)['answer']
 
         # r//(b^i)
         q1 = rep[(int(r, b)//int(d, b))%b]
 
         # add q1 to q
-        q = do_addition(q, do_multiplication(q1, p, b)['answer'], b)
+        q = do_addition(q, do_karatsuba(q1, p, b)['answer'], b)
 
         # r1 is q1*(b^i)*y
-        r1 = do_multiplication(q1, d, b)['answer']
+        r1 = do_karatsuba(q1, d, b)['answer']
 
         # substract r1 from r
         r = do_subtraction(r, r1, b)
@@ -259,10 +319,13 @@ def do_reduce(x,m,r):
         'answer': do_division(x,m,r)['r']
     }
 
+# Implementation of Algorithm 2.9, naive method
 def do_mod_multiply(x,y,m,r):
 
-    mul = do_multiplication(x,y,r)['answer']
+    # First compute x*y
+    mul = do_karatsuba(x,y,r)['answer']
     
+    # Then compute (x*y)mod(m)
     return do_reduce(mul,m,r)
 
 # Implementation of Algorithm 2.2
@@ -287,8 +350,8 @@ def do_euclid(x,y,r):
         yy = res['r']
 
         # step 2.4
-        x3 = do_subtraction(x1, do_multiplication(res['q'], x2, r)['answer'], r)
-        y3 = do_subtraction(y1, do_multiplication(res['q'], y2, r)['answer'], r)
+        x3 = do_subtraction(x1, do_karatsuba(res['q'], x2, r)['answer'], r)
+        y3 = do_subtraction(y1, do_karatsuba(res['q'], y2, r)['answer'], r)
 
         # step 2.5 and 2.6
         x1 = x2
