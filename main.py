@@ -40,6 +40,8 @@ my_answers = {'exercises': []}
 for exercise in my_exercises['exercises']:
     operation = exercise[0]                                        # get operation type
     params = exercise[1]                                           # get parameters
+
+    original = params.copy()
     
     if operation == 'add':
         params['answer'] = operations.do_addition(params['x'], params['y'], params['radix'])
@@ -82,6 +84,9 @@ for exercise in my_exercises['exercises']:
     if operation == 'inverse':
         result = operations.do_inverse(params['x'], params['m'], params['radix'])
         params['answer'] = result['answer']
+
+    if original != params:
+        print('{} not equal: \n\n {} \n\n {} \n\n'.format(operation, original, params))
 
     # Save answer
     my_answers['exercises'].append({operation: params})
