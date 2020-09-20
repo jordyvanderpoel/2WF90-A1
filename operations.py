@@ -84,10 +84,15 @@ def do_multiplication(x,y,r):
         return do_multiplication(flip_neg(x), flip_neg(y), r)
     if(x[0] == '-'):
         # x * y = -(-x * y)
-        return flip_neg(do_multiplication(flip_neg(x), y, r))
+        result = do_multiplication(flip_neg(x), y, r)
+        result['answer'] = flip_neg(result['answer'])
+        return result
+
     if(y[0] == '-'):
         # x * y = -(x * -y)
-        return flip_neg(do_multiplication(x, flip_neg(y), r))
+        result = do_multiplication(x, flip_neg(y), r)
+        result['answer'] = flip_neg(result['answer'])
+        return result
         
     # Ensure equal length
     maxlength = max(len(x),len(y))
@@ -168,96 +173,147 @@ def do_karatsuba(x,y,r):
     
     return result
 
-# Simple mod reduce method
-def do_reduce(x,m,r):
-    m3 = m
-    m2 = m
-    while larger_than(x, m2, r):
-        m3 = m2
-        m2 = m2+'0'
+# return the length of a string x in radix r
+def get_len(x, r):
+    k = '0'
+    while len(x) > 0:
+        x = x[1:]
+        k = do_addition(k, '1', r)
+    return k
 
-    diff = do_subtraction(x, m3, r)
-
-    # If m > diff, diff is the remainder
-    if larger_than(m, diff, r):
-        return {
-            'answer': diff
-        }
-    # Else, recurse
-    else:
-        return do_reduce(diff, m, r)
-
-# Return `True` if `x > y`
-def larger_than(x,y,r):
-
-    # If only one is negative, the
-    # positive value is larger
-    if(x[0] == '-' and y[0] != '-'):
-        return False
-    elif(x[0] != '-' and y[0] == '-'):
-        return True
-
-    # if `-x > -y`, than `x < y`
-    if(x[0] == '-' and y[0] == '-'):
-        z = y
-        y = x[1:]
-        x = z[1:]
-
-    # If there is a difference in length after removing the sign,
-    # on of the two is larger
-    if len(x) > len(y):
-        return True
-    elif len(x) < len(y):
-        return False
-    
-    # Iterate over the values to find a larger or smaller value
-    for i in range(len(x)):
-        diff = do_subtraction(x[i], y[i], r)
-        if diff[0] == '-':
-            return False
-        if diff != '0':
-            return True
-
-    # Both values are equal
-    return False
-
-
-# Strictly for positive integers and very slow
-# TODO: do long division
-def do_division(x,y,r):
-    return
-
-# Extended Euclidian division,
-# still figuring out the extended part
-def do_euclid(x,y,r):
+# x^y with radix r
+def do_pow(x, y, r):
+    result = x
 
     if y == '0':
+        return '1'
+
+    while y != '1':
+        result = do_multiplication(result, x, r)['answer']
+        y = do_subtraction(y, '1', r)
+    return result
+
+# Cast a radix to a str digit with itself as radix
+def do_radix_to_str(r):
+    s = '0'
+    k = r
+    while k > 0:
+        s = do_addition(s, '1', r)
+        k = k - 1
+    return s
+
+# Implementation of algorithm 1.5
+def do_division(x,y,b):
+
+    # Dividing by zero resolves to 0
+    if y == '0':
         return {
-            'answ-d': x,
-            'answ-a': '0',
-            'answ-b': '1'
+            'r': '0',
+            'q': '0'
         }
 
-    # Get the remainder of x%y 
-    remainder = do_reduce(x,y,r)['answer']
+    # Initialize result vars
+    r = x
+    q = '0'
 
-    # Recursive loop until `y` == `0`
-    result = do_euclid(y, remainder, r)
+    # Get the length of both digits
+    m = get_len(x,b)
+    n = get_len(y,b)
 
-    # a0 = do_division(result['answ-b'], result['answ-a'], r)
+    # k = m - n + 1
+    k = do_addition(do_subtraction(m,n,b), '1', b)
 
-    # a0 = result['answ-a']
+    # Loop over k-1, k-2, ..., 0
+    i = do_subtraction(k, '1', b)
+    while i[0] != '-':
 
-    # a1 = do_multiplication(a0, result['answ-a'], r)['answer']
+        # (b^i)
+        p = do_pow(do_radix_to_str(b), i, b)
 
-    # a = do_subtraction(result['answ-b'], a1, r)
+        # (b^i)*y
+        d = do_multiplication(p, y, b)['answer']
 
-    # b = result['answ-a']
+        # r//(b^i)
+        q1 = rep[(int(r, b)//int(d, b))%b]
 
+        # add q1 to q
+        q = do_addition(q, do_multiplication(q1, p, b)['answer'], b)
+
+        # r1 is q1*(b^i)*y
+        r1 = do_multiplication(q1, d, b)['answer']
+
+        # substract r1 from r
+        r = do_subtraction(r, r1, b)
+
+        # substract one from i to decrement the loop index
+        i = do_subtraction(i, '1', b)
+        
     return {
-        'answ-d': result['answ-d'],
-        'answ-a': '',
-        'answ-b': ''
+        'r': r.lstrip('0').zfill(1),
+        'q': q.lstrip('0').zfill(1)
+    }
+
+# Modular reduction using long division
+def do_reduce(x,m,r):
+    return {
+        'answer': do_division(x,m,r)['r']
+    }
+
+def do_mod_multiply(x,y,m,r):
+
+    mul = do_multiplication(x,y,r)['answer']
+    
+    return do_reduce(mul,m,r)
+
+# Implementation of Algorithm 2.2
+def do_euclid(x,y,r):
+
+    # Initialize variables
+    xx = x
+    yy = y
+    x1 = '1'
+    x2 = '0'
+    y1 = '0'
+    y2 = '1'
+
+    # Loop while yy (b' in the Algorithm 2.2) > 0
+    while yy != '0':
+
+        # step 2.2
+        res = do_division(xx,yy,r)
+
+        # step 2.3
+        xx = yy
+        yy = res['r']
+
+        # step 2.4
+        x3 = do_subtraction(x1, do_multiplication(res['q'], x2, r)['answer'], r)
+        y3 = do_subtraction(y1, do_multiplication(res['q'], y2, r)['answer'], r)
+
+        # step 2.5 and 2.6
+        x1 = x2
+        y1 = y2
+        x2 = x3
+        y2 = y3
+    
+    # GCD
+    d = xx
+
+    # Flip signs
+    if x[0] != '-' and x != '0':
+        x = x1
+    else:
+        x = flip_neg(x1)
+
+    if y[0] != '-' and y != '0':
+        y = y1
+    else:
+        y = flip_neg(y1)
+    
+    return {
+        'answ-d': d,
+        'answ-a': x,
+        'answ-b': y
     }
 
 # TODO
