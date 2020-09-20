@@ -45,15 +45,13 @@ for exercise in my_exercises['exercises']:
         params['answer'] = operations.do_addition(params['x'], params['y'], params['radix'])
     
     if operation == 'mod-add':
-        ### TODO: Do modular addition ###
-        params['answer'] = '1234'
+        params['answer'] = operations.do_mod_addition(params['x'], params['y'], params['m'], params['radix'])
     
     if operation == 'subtract':
         params['answer'] = operations.do_subtraction(params['x'], params['y'], params['radix'])
 
     if operation == 'mod-subtract':
-        ### TODO: Do modular subtraction ###
-        params['answer'] = '1234'
+        params['answer'] = operations.do_mod_subtraction(params['x'], params['y'], params['m'], params['radix'])
     
     if operation == 'multiply':
         result = operations.do_multiplication(params['x'], params['y'], params['radix'])

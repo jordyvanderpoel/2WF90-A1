@@ -35,6 +35,16 @@ def do_addition(x,y,r):
 
     return result.lstrip('0').zfill(1)
     
+def do_mod_addition(x,y,m,r):
+    z = do_addition(x,y,r)
+
+    while larger_than(z,m,r) or z == m: # While z >= m
+        z = do_subtraction(z,m,r)
+    while larger_than('0',z,r): # While z < 0
+        z = do_addition(z,m,r)
+        
+    return z
+    
 def do_subtraction(x,y,r):
     # First handle negative numbers
     if(x[0] == '-' and y[0] == '-'):
@@ -76,6 +86,16 @@ def do_subtraction(x,y,r):
         result = rep[(sum%r)] + result # Add the sum without carries to the current result-string
 
     return result.lstrip('0').zfill(1)
+
+def do_mod_subtraction(x,y,m,r):
+    z = do_subtraction(x,y,r)
+    
+    while larger_than(z,m,r) or z == m: # While z >= m
+        z = do_subtraction(z,m,r)
+    while larger_than('0',z,r): # While z < 0
+        z = do_addition(z,m,r)
+        
+    return z
     
 def do_multiplication(x,y,r):    
     # First handle negative numbers
